@@ -99,7 +99,7 @@ class NftMarketplace(arc4.ARC4Contract):
     ) -> None:
 
         assert Txn.sender == Global.creator_address
-        assert not self.bootstrapped
+        assert self.bootstrapped == True
         assert mbr_pay.receiver == Global.current_application_address
         assert mbr_pay.amount == Global.min_balance + Global.asset_opt_in_min_balance
 
@@ -151,7 +151,16 @@ class NftMarketplace(arc4.ARC4Contract):
         buyer_txn: gtxn.PaymentTransaction,
         quantity: UInt64,
     ) -> None:
-        "여기에 코드 작성"
+        assert self.bootstrapped == True
+        assert buyer_txn.sender == Txn.sender
+        assert buyer_txn.receiver == Global.current_application_address
+        assert buyer_txn.amount == self.unitary_price * quantity
+
+        itxn.AssetTransfer(
+            xfer_asset=self.asset_id,
+            asset_receiver=Txn.sender,
+            asset_amount=quantity,
+        ).submit()
 
     "문제 3 끝"
 
