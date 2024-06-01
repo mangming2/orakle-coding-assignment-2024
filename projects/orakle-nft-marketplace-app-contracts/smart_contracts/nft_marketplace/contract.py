@@ -210,6 +210,17 @@ class NftMarketplace(arc4.ARC4Contract):
 
     @arc4.abimethod(allow_actions=["DeleteApplication"])
     def withdraw_and_delete(self) -> None:
-        "여기에 코드 작성"
+        assert Txn.sender == Global.creator_address
+
+        itxn.AssetTransfer(
+            xfer_asset=self.asset_id,
+            asset_receiver=Global.creator_address,
+            asset_close_to=Global.creator_address,
+        ).submit()
+
+        itxn.Payment(
+            receiver=Global.creator_address,
+            close_remainder_to=Global.creator_address,
+        ).submit()
 
     "문제 4 끝"
